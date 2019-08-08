@@ -22,7 +22,7 @@ jobs:
           # must be absolute path or relative path from working_directory
           at: my_workspace
           
-      - run: cat my-workspace/echo-output
+      - run: cat my_workspace/echo-output
           # show me content of the file
       
   testb:
@@ -47,7 +47,9 @@ jobs:
         - attach_workspace:
             #must be absolute path or relative path from working_directory
             at: my_workspace
-        
+        -run: |
+            echo "deploy message!"
+            cat my_workspace/echo-output
         
 workflows: 
   version: 2
