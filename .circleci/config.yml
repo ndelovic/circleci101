@@ -44,12 +44,13 @@ jobs:
     docker:
       -image: circleci/ruby:2.4.1
     steps:
-        - attach_workspace:
+      - attach_workspace:
             #must be absolute path or relative path from working_directory
             at: my_workspace
-        -run: |
-            echo "deploy message!"
-            cat my_workspace/echo-output
+      
+      - run: |
+          echo "deploy message!"
+          cat my_workspace/echo-output
         
 workflows: 
   version: 2
