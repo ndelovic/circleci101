@@ -6,19 +6,46 @@ jobs:
     steps:
       - checkout
       - run: echo "A first hello"
-  test:
+      - run: sleep 5
+      
+  
+  testa:
     docker:
       - image: circleci/ruby:2.4.1
     steps:
       - checkout
-      - run: echo "A more familiar hi"
+      - run: echo "A more familiar hello"
       - run: sleep 5
-workflows:
+  testb:
+    docker: 
+      - image: circleci/ruby:2.4.1
+    steps:
+      - checkout
+      - run: echo "a localized salut"
+      - run: sleep 5
+     
+     
+     deploy:
+      docker:
+        -image: circleci/ruby:2.4.1
+      steps:
+        - checkout
+        - run: echo "a final goodbye"
+        - run: sleep 5
+        
+        
+workflows: 
   version: 2
   build_and_test:
     jobs:
-      - build
-      - test:
-        #run certain job but other jobs need to be done before running this on
-          requires:
-            - build
+     - build
+     - testa:
+        requires:
+          - build 
+     - testb: 
+        requires:
+          - build
+     - deploy: 
+        requires:
+          - testa
+          - testb
