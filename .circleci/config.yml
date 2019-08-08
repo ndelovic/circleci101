@@ -6,53 +6,52 @@ jobs:
     steps:
       - checkout
       - run: mkdir -p my_workspace
-        # making folder called my_workspace
-      - run: echo "hello world" > my_workspace/echo-output
+      - run: echo "Hello World" > my_workspace/echo-output
       - persist_to_workspace:
-          # must be absolute path or relative pat from working_directory
+          # Must be an absolute path, or relative path from working_directory
           root: my_workspace
-          # must be relative path from root
+          # Must be relative path from root
           paths:
-            - echo-output
+            - echo-output      
   testa:
     docker:
       - image: circleci/ruby:2.4.1
     steps:
       - attach_workspace:
-          # must be absolute path or relative path from working_directory
+          # Must be absolute path or relative path from working_directory
           at: my_workspace
-          
+
       - run: cat my_workspace/echo-output
-          # show me content of the file
-      
+          
   testb:
-    docker: 
+    docker:
       - image: circleci/ruby:2.4.1
     steps:
       - attach_workspace:
-          # must be absolute path or relative path from working_directory
-          - at: my_workspace
-      
+          # Must be absolute path or relative path from working_directory
+          at: my_workspace
+
       - run: |
-          if [[ $(cat my_workspace/echo-output) == "trying out workspaces" ]]; then
-            echo "it worked"
-          esle
-            echo "nope!"; exit 1
-          fi
-     
+          # this will fail intentionally, we'll use SSH to debug and fix
+          if [[ $(cat my_workspace/echo-output) == "Trying out workspaces" ]]; then
+            echo "It worked!";
+          else
+            echo "Nope!"; exit 1
+          fi   
+          
   deploy:
     docker:
-      -image: circleci/ruby:2.4.1
+      - image: circleci/ruby:2.4.1
     steps:
       - attach_workspace:
-            #must be absolute path or relative path from working_directory
-            at: my_workspace
-      
+          # Must be absolute path or relative path from working_directory
+          at: my_workspace
+
       - run: |
-          echo "deploy message!"
+          echo "Deploying message!"
           cat my_workspace/echo-output
-        
-workflows: 
+
+workflows:
   version: 2
   build_and_test:
     jobs:
@@ -60,10 +59,10 @@ workflows:
       - testa:
           requires:
             - build 
-      - testb: 
+      - testb:
           requires:
-            - build
-      - deploy: 
+            - build 
+      - deploy:
           requires:
             - testa
             - testb
