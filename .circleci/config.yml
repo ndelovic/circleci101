@@ -18,4 +18,7 @@ workflows:
   build_and_test:
     jobs:
       - build
-      - test 
+      - test:
+        #run certain job but other jobs need to be done before running this on
+          requires:
+            - build
