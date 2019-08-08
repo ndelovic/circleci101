@@ -5,33 +5,49 @@ jobs:
       - image: circleci/ruby:2.4.1
     steps:
       - checkout
-      - run: echo "A first hello"
-      - run: sleep 5
-      
-  
+      - run: mkdir -p my_workspace
+        # making folder called my_workspace
+      - run: echo "hello world" > my_workspace/echo-output
+      - persist_to_workspace:
+          # must be absolute path or relative pat from working_directory
+          root: my_workspace
+          # must be relative path from root
+          paths:
+            - echo-output
   testa:
     docker:
       - image: circleci/ruby:2.4.1
     steps:
-      - checkout
-      - run: echo "A more familiar hello"
-      - run: sleep 5
+      - attach_workspace:
+          # must be absolute path or relative path from working_directory
+          at: my_workspace
+          
+      - run: cat my-workspace/echo-output
+          # show me content of the file
+      
   testb:
     docker: 
       - image: circleci/ruby:2.4.1
     steps:
-      - checkout
-      - run: echo "a localized salut"
-      - run: sleep 5
+      - attach_workspace:
+          # must be absolute path or relative path from working_directory
+          - at: my_workspace
+      
+      - run: |
+          # this will fail intentionally, we'll use SSH to debug and fix
+          if [[ $(cat my_workspace/echo-output) == "trying out workspaces" ]]; then
+            echo "it worked"
+          esle
+            echo "nope!"; exit 1
+          fi
      
-     
-    deploy:
-      docker:
-        -image: circleci/ruby:2.4.1
-      steps:
-        - checkout
-        - run: echo "a final goodbye"
-        - run: sleep 5
+  deploy:
+    docker:
+      -image: circleci/ruby:2.4.1
+    steps:
+        - attach_workspace:
+            #must be absolute path or relative path from working_directory
+            at: my_workspace
         
         
 workflows: 
